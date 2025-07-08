@@ -1,0 +1,1056 @@
+{
+  "name": "IMAGES OF SCRIPT TO TELEGRAM ANOTHER MODEL",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "83095af0-5188-4ebe-aafe-a601c8451a33",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": " Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_OPENROUTER_BEARER_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "= {\n  \"model\": \"google/gemini-2.5-flash-lite-preview-06-17\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"**Role Prompt:**\\n\\nYou are the most revered and award-winning script and visual story designer with over 60 years of unmatched storytelling experience. You specialize in emotionally intense, anime-style visual dramas that require no music or dialogue to convey profound narrative depth.\\n\\n**Your Task:**\\n\\nCraft one fully original and emotionally powerful 60-second animated visual story every day, broken into six interconnected scenes. Each story must follow a unified emotional and narrative arc from beginning to end — like a silent short film divided into six evolving visual frames.\\n\\n- Core Emotions: Night, darkness, emotional intensity, faceless characters\\n- Tone: Heartbreak, silence, drama, minimalism\\n- Style: Cinematic anime visual language\\n- Rules: No dialogue. No music. Only pure visual and motion storytelling\\n\\nOutput Format Title Example (You Must Create a Unique Themed Title Each Day):\\nSilent Moon – Motion & Visual Prompts\\n60-Second Animated Visual Story\\n\\nRequired Output Structure:\\n- SCENE 1: [Scene Title] (00:00 - 00:10)\\n  - Image Prompt: [Anime cinematic frame with dramatic lighting, symbolism, and composition]\\n  - Motion Prompt: [Camera motion + figure movement + pacing in slow/fast motion terms]\\n  - Visual Effects: [Particles, light flicker, blur, glow, distortion, atmosphere, etc.]\\n\\n- SCENE 2: [Scene Title] (00:10 - 00:20)\\n  - ...\\n- SCENE 3: ...\\n- SCENE 4: ...\\n- SCENE 5: ...\\n- SCENE 6: ...\\n\\nEnd your output with:\\n- MOTION RHYTHM BREAKDOWN:\\n  - Emotional Pacing: [List arcs such as anticipation, confrontation, heartbreak, resolution]\\n  - Speed Variations: [Mention frame speed transitions like 0.1x, 1x, 2x etc.]\\n  - Camera Movement Types: [List techniques like push-in, pan, tilt, pull-back, shake]\\n\\nImportant Notes:\\n- All six scenes must form a single cohesive visual narrative.\\n- Do not include any cheerful lighting, sound, music, or dialogue.\\n- Use faceless human-like figures as symbols of emotion.\\n- Each story must feel like a haunting memory with cinematic intensity.\\n- Daily story must be new — no repetition of previous structures or imagery.\\n\\nFinal Reminder: Output must include all 6 structured scenes + motion rhythm breakdown.\"\n    }\n  ]\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "9535bc71-e476-44ad-be2d-49e4f9b6ae9b",
+      "name": " SCRIPT"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ce6a895-0d38-4347-b485-dcb600391f5",
+              "name": "SCRIPT",
+              "value": "={{ $json.body.choices[0].message.content }} ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "417d37fd-ae92-4895-9b1b-7c564d181fb6",
+      "name": " SENDING SCRIPT"
+    },
+    {
+      "parameters": {
+        "jsCode": " const script = $json.SCRIPT;\n\nif (!script) {\n  return [{ json: { error: \"SCRIPT field is empty or missing\" } }];\n}\n\n// Match all scenes using SCENE (case-insensitive), and capture from each scene title to the next or until end\nconst sceneMatches = script.match(/- SCENE \\d+:.*?(?=\\n- SCENE \\d+:|\\n\\nMOTION RHYTHM BREAKDOWN|\\n*$)/gis);\n\nif (!sceneMatches) {\n  return [{ json: { error: \"No scenes found\" } }];\n}\n\nreturn sceneMatches.map((scene, index) => {\n  const sceneTitleMatch = scene.match(/- SCENE \\d+:.*?(?=\\n)/i);\n  const title = sceneTitleMatch ? sceneTitleMatch[0].trim() : `Scene ${index + 1}`;\n  const content = scene.replace(sceneTitleMatch[0], '').trim();\n\n  return {\n    json: {\n      scene: title,\n      content\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "fb4489b4-d015-4209-9793-451d47f6652e",
+      "name": " CLEAN SCRIPT"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 1"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        -580
+      ],
+      "id": "f881abe0-ebbc-4506-ae24-c082d83cb3a8",
+      "name": "Send a photo message",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.outputs[0].url }} ",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        560
+      ],
+      "id": "f5f994f6-e42b-4397-9230-e5e2709de4e3",
+      "name": "HTTP Request11"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        -360
+      ],
+      "id": "56a80db8-77e9-46d0-a113-d0304656e52f",
+      "name": "Send a photo message1",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 3"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        -120
+      ],
+      "id": "119b25d2-f904-4f5a-9d14-cb93caf7de9a",
+      "name": "Send a photo message2",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 4"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        120
+      ],
+      "id": "027d013b-7e6b-4834-b0cb-5303a0b34f93",
+      "name": "Send a photo message3",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 5"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        340
+      ],
+      "id": "5f6685a1-9d0e-428e-bf45-c0d8f413ea2b",
+      "name": "Send a photo message4",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "SCENE 6"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2220,
+        560
+      ],
+      "id": "b2b76876-7a0c-4cea-8633-d1bb5e7ad079",
+      "name": "Send a photo message5",
+      "webhookId": "YOUR_WEBHOOK_URL",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZL9aC3Os0fzjivc1",
+          "name": " SCRIPT FOR VEDIO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": " return items.map(item => {\n  return {\n    json: {\n      message: `🎬 ${item.json.scene}\\n\\n${item.json.content}`\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "7f9323ef-5c0f-4b1e-86f0-d902f6f45d5b",
+      "name": " COMBINE SCENE"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64b56680-94dd-4ea4-9f4a-72b1a256c45b",
+              "name": " scenesList",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "7a766285-deab-4fb7-a0d8-826b68853d54",
+      "name": " EXTRACT SCENE"
+    },
+    {
+      "parameters": {
+        "jsCode": " return items.map((item, index) => {\n  const rawScene = item.json[\" scenesList\"]; // Note the leading space\n  return {\n    json: {\n      sceneNumber: index + 1,\n      sceneMessage: rawScene.trim()\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "ce3436a1-5945-45fc-81b0-038b5fd2bde7",
+      "name": " SEPERATE SCENES"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 1)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        -460
+      ],
+      "id": "6405efd5-568b-41b7-8fef-a2baab540d1e",
+      "name": " SCENE 1"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 2)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        -260
+      ],
+      "id": "6c0b3a40-a6fc-4c51-a358-5ad5fa0dd9df",
+      "name": " SCENE 2"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 3)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        -60
+      ],
+      "id": "6c42d331-cee7-41da-bfd1-e8685e94647c",
+      "name": "  SCENE 3"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 4)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        140
+      ],
+      "id": "ef137b54-cf5e-4a04-a334-c35657f80131",
+      "name": "  SCENE 4"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 5)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        360
+      ],
+      "id": "ce318b11-c9cb-4573-a0af-7befb6df0ff6",
+      "name": "  SCENE 5"
+    },
+    {
+      "parameters": {
+        "jsCode": " // Input: entire array of scenes from previous node\n// Output: only the object with sceneNumber === 1\n\nreturn items\n  .map(item => item.json)\n  .filter(scene => scene.sceneNumber === 6)\n  .map(scene => ({ json: scene }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        560
+      ],
+      "id": "02f5d1d7-13e5-4f4c-8de9-1574ed2c9d07",
+      "name": " SCENE 6"
+    },
+    {
+      "parameters": {
+        "url": "= {{ $json.body.outputs[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        -540
+      ],
+      "id": "16bf24fa-bd64-4cae-9147-b383ede89b4e",
+      "name": " IMAGE DOWNLOAD"
+    },
+    {
+      "parameters": {
+        "url": "= {{ $json.body.outputs[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2020,
+        -320
+      ],
+      "id": "0f9fbdb0-ffab-4951-ab3e-60f18609da0b",
+      "name": "  IMAGE DOWNLOAD"
+    },
+    {
+      "parameters": {
+        "url": "= {{ $json.body.outputs[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2040,
+        -100
+      ],
+      "id": "e4fd40ce-fd34-414a-a0b3-b254bc630501",
+      "name": "  IMAGE DOWNLOAD1"
+    },
+    {
+      "parameters": {
+        "url": "= {{ $json.body.outputs[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        340
+      ],
+      "id": "0848a9af-10bc-43bf-8a3d-ea1b337ed0c4",
+      "name": "  IMAGE DOWNLOAD2"
+    },
+    {
+      "parameters": {
+        "url": "= {{ $json.body.outputs[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2040,
+        140
+      ],
+      "id": "5051be6a-a527-4902-b25c-18894f48d639",
+      "name": "  IMAGE DOWNLOAD4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        -480
+      ],
+      "id": "26f0a13c-8d9a-4eaf-b606-3aa390beb9b8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        -280
+      ],
+      "id": "f4b6edae-d7fa-4697-9797-b6e77a8a7331",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        -100
+      ],
+      "id": "8210c375-9ac1-4a67-9702-6891078be11e",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        160
+      ],
+      "id": "d35f8649-25bc-4193-872b-c63ae4b8e524",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        360
+      ],
+      "id": "47d3f65f-3e32-4e28-b850-4d89803f382b",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.stablecog.com/v1/image/generation/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_STABLECOG_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": " {\n  \"model\": \"stable-diffusion\",\n  \"prompt\": \"={{ $json.sceneMessage.match(/- Image Prompt:(.*?)(- Motion Prompt:|- Visual Effects:|$)/s)?.[1].trim() || '' }}\",\n  \"width\": 512,\n  \"height\": 512,\n  \"num_outputs\": 1\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1720,
+        580
+      ],
+      "id": "d572adf5-ebd6-4bbb-8326-aa47b7230975",
+      "name": "HTTP Request5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": " SCRIPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SCRIPT": {
+      "main": [
+        [
+          {
+            "node": " SENDING SCRIPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SENDING SCRIPT": {
+      "main": [
+        [
+          {
+            "node": " CLEAN SCRIPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " CLEAN SCRIPT": {
+      "main": [
+        [
+          {
+            "node": " COMBINE SCENE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request11": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " COMBINE SCENE": {
+      "main": [
+        [
+          {
+            "node": " EXTRACT SCENE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " EXTRACT SCENE": {
+      "main": [
+        [
+          {
+            "node": " SEPERATE SCENES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SEPERATE SCENES": {
+      "main": [
+        [
+          {
+            "node": " SCENE 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "  SCENE 4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "  SCENE 5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": " SCENE 6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": " SCENE 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "  SCENE 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SCENE 1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SCENE 2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  SCENE 3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  SCENE 4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  SCENE 5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " SCENE 6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " IMAGE DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  IMAGE DOWNLOAD": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  IMAGE DOWNLOAD1": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  IMAGE DOWNLOAD2": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "  IMAGE DOWNLOAD4": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": " IMAGE DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "  IMAGE DOWNLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "  IMAGE DOWNLOAD1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "  IMAGE DOWNLOAD4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "  IMAGE DOWNLOAD2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1907209a-c618-4288-ba4c-c6ce67ea4a99",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REPLACE_ME"
+  },
+  "id": "q5El10TmOVwFGerW",
+  "tags": []
+}
