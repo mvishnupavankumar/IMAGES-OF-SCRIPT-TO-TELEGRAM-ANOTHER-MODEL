@@ -1,4 +1,4 @@
-{
+ {
   "name": "IMAGES OF SCRIPT TO TELEGRAM ANOTHER MODEL",
   "nodes": [
     {
@@ -64,7 +64,7 @@
         "assignments": {
           "assignments": [
             {
-              "id": "1ce6a895-0d38-4347-b485-dcb600391f5",
+              "id": "1ce6a895-0d38-4347-b485-dcb60039a1f5",
               "name": "SCRIPT",
               "value": "={{ $json.body.choices[0].message.content }} ",
               "type": "string"
@@ -101,7 +101,7 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 1"
+          "caption": "={{ $(' SCENE 1').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -112,7 +112,7 @@
       ],
       "id": "f881abe0-ebbc-4506-ae24-c082d83cb3a8",
       "name": "Send a photo message",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -136,8 +136,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1980,
-        560
+        2160,
+        540
       ],
       "id": "f5f994f6-e42b-4397-9230-e5e2709de4e3",
       "name": "HTTP Request11"
@@ -148,7 +148,7 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 2"
+          "caption": "={{ $(' SCENE 2').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -159,7 +159,7 @@
       ],
       "id": "56a80db8-77e9-46d0-a113-d0304656e52f",
       "name": "Send a photo message1",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -173,7 +173,7 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 3"
+          "caption": "={{ $('  SCENE 3').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -184,7 +184,7 @@
       ],
       "id": "119b25d2-f904-4f5a-9d14-cb93caf7de9a",
       "name": "Send a photo message2",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -198,7 +198,7 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 4"
+          "caption": "={{ $('  SCENE 4').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -209,7 +209,7 @@
       ],
       "id": "027d013b-7e6b-4834-b0cb-5303a0b34f93",
       "name": "Send a photo message3",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -223,7 +223,7 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 5"
+          "caption": "={{ $('  SCENE 5').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -234,7 +234,7 @@
       ],
       "id": "5f6685a1-9d0e-428e-bf45-c0d8f413ea2b",
       "name": "Send a photo message4",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -248,18 +248,18 @@
         "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "binaryData": true,
         "additionalFields": {
-          "caption": "SCENE 6"
+          "caption": "={{ $('Code').item.json.sceneMessage }}"
         }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2220,
-        560
+        2420,
+        520
       ],
       "id": "b2b76876-7a0c-4cea-8633-d1bb5e7ad079",
       "name": "Send a photo message5",
-      "webhookId": "YOUR_WEBHOOK_URL",
+      "webhookId": "b6f74761-80c7-4487-968e-03f675b9718a",
       "credentials": {
         "telegramApi": {
           "id": "ZL9aC3Os0fzjivc1",
@@ -732,11 +732,24 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1720,
-        580
+        1900,
+        560
       ],
       "id": "d572adf5-ebd6-4bbb-8326-aa47b7230975",
       "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "jsCode": " const sceneMessage = $(' SCENE 6').first().json.sceneMessage;\n\nconst lines = sceneMessage.split('\\n');\n\nconst cutoffIndex = lines.findIndex(line => line.includes('MOTION RHYTHM BREAKDOWN'));\n\nconst trimmed = cutoffIndex !== -1\n  ? lines.slice(0, cutoffIndex).join('\\n')\n  : sceneMessage;\n\nreturn [\n  {\n    json: {\n      sceneMessage: trimmed\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        660
+      ],
+      "id": "a426d2db-a5aa-441c-ac7e-287d71b3674e",
+      "name": "Code"
     }
   ],
   "pinData": {},
@@ -913,7 +926,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request5",
+            "node": "Code",
             "type": "main",
             "index": 0
           }
@@ -1040,13 +1053,24 @@
           }
         ]
       ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "1907209a-c618-4288-ba4c-c6ce67ea4a99",
+  "versionId": "27554fc8-83e5-4bfe-8ad7-dff99f0e0d8c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "REPLACE_ME"
